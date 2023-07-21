@@ -10,26 +10,34 @@ export class BookARide {
 
   async book(
     id: string,
-    departure: string,
-    arrival: string,
+    departureLocation: string,
+    arrivalLocation: string,
+    departureTime: string,
+    arrivalTime: string,
     driverType: string,
   ) {
     const distance = await this.rideScannerRepository.calculateDistance(
-      departure,
-      arrival,
+      departureLocation,
+      arrivalLocation,
     );
 
     const isOutsideParis = await this.rideScannerRepository.isOutsideParis(
-      arrival,
+      arrivalLocation,
+    );
+
+    const isDuringNightTime = await this.rideRepository.isDuringNightTime(
+      departureTime,
+      arrivalTime,
     );
 
     const ride = Ride.book(
       id,
-      departure,
-      arrival,
+      departureLocation,
+      arrivalLocation,
       driverType,
       distance,
       isOutsideParis,
+      isDuringNightTime,
     );
 
     return this.rideRepository.save(ride);
